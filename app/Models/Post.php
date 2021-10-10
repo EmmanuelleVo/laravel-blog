@@ -1,84 +1,67 @@
 <?php
 
-
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Collection;
-use Illuminate\Support\Facades\File;
-use Spatie\YamlFrontMatter\Document;
-
-class Post
+/**
+ * App\Models\Post
+ *
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property string $body
+ * @property \Illuminate\Support\Carbon $published_at
+ * @property string $excerpt
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @method static \Illuminate\Database\Eloquent\Builder|Post newModelQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post newQuery()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post query()
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereBody($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereCreatedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereExcerpt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereId($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post wherePublishedAt($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereSlug($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereTitle($value)
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereUpdatedAt($value)
+ * @mixin \Eloquent
+ * @property int $category_id
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereCategoryId($value)
+ * @property-read \App\Models\Category $category
+ * @property int $user_id
+ * @property-read \App\Models\User $user
+ * @method static \Illuminate\Database\Eloquent\Builder|Post whereUserId($value)
+ * @method static \Database\Factories\PostFactory factory(...$parameters)
+ */
+class Post extends Model
 {
 
-    /**
-     * Post constructor.
-     * @param $title
-     * @param $excerpt
-     * @param $date
-     * @param $body
-     * @param $slug
-     */
-    public function __construct($title, $excerpt, $date, $body, $slug)
+    protected $dates = [
+        'published_at'
+    ];
+
+    /*protected $fillable = [
+        'title',
+        'body',
+        'slug',
+        'excerpt',
+        'published_at',
+        'category_id'
+    ];*/
+    protected $guarded = [];
+
+    public function category()
     {
-        $this->title = $title;
-        $this->excerpt = $excerpt;
-        $this->date = $date;
-        $this->body = $body;
-        $this->slug = $slug;
+        // retourne une relation de type BelongsTo sur l'instance de la classe Category
+        return $this->belongsTo(Category::class);
+    }
+    public function author() //user
+    {
+        return $this->belongsTo(User::class, 'user_id'); // si le nom de la fonction ≠ -> author_id => foreignKey : user_id
     }
 
-
-    public static function find($slug)
-    {
-
-        $posts = static::all();
-
-        return $posts->firstWhere('slug', $slug);
-
-
-        /*$path = resource_path("posts/{$slug}.html");
-        if (!file_exists($path)) {
-            //ddd($path);
-            //abort(404);
-            //return redirect('/'); // not the job of this method
-            throw new ModelNotFoundException();
-        }
-        // soit une valeur du cache, soit une valeur recalculée // toutes les 1200s, ça expire.
-        return cache()->remember("posts/{$slug}", 1200, // pouvoir avoir accès à $path (scope), introduire manuellement use ($path)
-            //var_dump('le cache est vide, je vais chercher sur le disque');
-            fn() => file_get_contents($path));*/
-
-    }
-
-
-    public static function all(): Collection
-    {
-        return cache()->rememberForever('posts.all', function () {
-
-            $files = File::files(resource_path("posts"));
-
-            return collect($files)
-                ->map(function ($file) {
-                    $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parseFile($file);
-                    return new Post($document->title, $document->excerpt, $document->date, $document->body(), $document->slug);
-                })
-                ->sortByDesc('date');
-        });
-
-
-
-
-        /*foreach ($files as $file) {
-            $document = \Spatie\YamlFrontMatter\YamlFrontMatter::parseFile($file);
-            $posts[] = new Post($document->title, $document->excerpt, $document->date, $document->body(), $document->slug);
-        }*/
-
-        /*$models = array_map(function ($post) {
-            return $post->getContents();
-        }, $posts);
-
-        return $models;*/
-    }
+    use HasFactory;
 }
