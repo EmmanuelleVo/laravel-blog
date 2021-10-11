@@ -19,12 +19,22 @@ use Illuminate\Support\Facades\Route;
 // ClassName::function : façade
 
 Route::get('/posts', function () {
-    return view('posts');
+
+    $posts = Post::latest('published_at')
+        ->with('category', 'author')
+        ->get();
+    $categories = Category::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    $users = User::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    /*$page_title = liste de tous les posts, liste de la catégorie, liste de l'auteur'*/;
+
+    return view('posts', compact('posts', 'categories', 'users'));
     //return 'hello world'; // pratique pour debug
     //return ['message' => 'Hello World']; // peut retourner du json -> pratique pour API et debug
 });
-
-
 
 
 /* LISTE DE TOUS LES POSTS */
@@ -33,15 +43,21 @@ Route::get('/', function () {
     //$posts = Post::all(); //récupérer uniquement les posts sans relation
     // collection de posts avec les catégories qui leur sont associées; with -> eager loading
 
-    $posts = Post::latest('published_at')->with('category', 'author')->get();
+    $posts = Post::latest('published_at')
+        ->with('category', 'author')
+        ->get();
     $categories = Category::whereHas('posts')
         ->orderBy('name')
         ->get();
+    $users = User::whereHas('posts')
+        ->orderBy('name')
+        ->get();
 
-    return view('posts',
-        ['posts' => $posts,
+    return view('posts', [
+            'posts' => $posts,
             'categories' => $categories,
-            'page_title' => 'La liste des posts'
+            'page_title' => 'La liste des posts',
+            'users' => $users,
         ]);
 });
 
@@ -75,10 +91,17 @@ Route::get('/categories', function () {
 Route::get('/categories/{category:slug}', function (Category $category) {
 
     $page_title = "All posts from: {$category->name}";
-    $categories = Category::all();
-    //ddd($category->posts);
+    $categories = Category::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    $posts = $category->posts;
+    $posts->load('category', 'author');
+    $users = User::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    $currentCategory = $category;
 
-    return view('category', compact('category', 'page_title', 'categories'));
+    return view('posts', compact('category', 'page_title', 'categories', 'posts', 'users', 'currentCategory'));
 });
 
 Route::get('/users', function () {
@@ -91,12 +114,23 @@ Route::get('/users', function () {
             'users' => $users
         ]);
 });
+
 Route::get('/users/{user:slug}', function (User $user) {
 
     $user->load('posts.category');
     $page_title = "All posts from: {$user->name}";
+    $posts = $user->posts;
+    $posts->load('author');
+    $categories = Category::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    $users = User::whereHas('posts')
+        ->orderBy('name')
+        ->get();
+    $currentAuthor = $user;
 
-    return view('user', compact('user', 'page_title'));
+
+    return view('posts', compact('user', 'page_title', 'posts', 'categories', 'users', 'currentAuthor'));
 });
 
 
