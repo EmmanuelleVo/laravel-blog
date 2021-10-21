@@ -9,5 +9,5 @@
                 class="col-span-{{$loop->iteration < 3 ? '3' : '2' }}"
             />
         @endforeach
-        @endif
     </div>
+@endif

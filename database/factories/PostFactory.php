@@ -51,9 +51,9 @@ class PostFactory extends Factory
             'title' => $title,
             'slug' => Str::slug($title, '-') ,//str_slug($title, '-'),
             //'excerpt' => $this->faker->sentence,
-            'excerpt' => $this->faker->sentences(2, true),
-            //'body' => $this->faker->paragraph,
-            'body' => $this->faker->paragraphs(7, true), //true -> text et non array
+            'excerpt' => '<p>' . implode('<p></p>', $this-> faker->paragraphs(2)) . '</p>',
+            //'body' => $this->faker->paragraphs(7, true), //true -> text et non array
+            'body' => '<p>' . implode('<p></p>', $this-> faker->paragraphs(7)) . '</p>',
             'published_at' => $this->faker->dateTimeBetween('-1 week', 'now'),
         ];
     }

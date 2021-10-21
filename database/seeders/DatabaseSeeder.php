@@ -33,13 +33,13 @@ class DatabaseSeeder extends Seeder
 
         $emmanuelle = User::factory()->create([
             'name' => 'Emmanuelle Vo',
-            'slug' => Str::slug('Emmanuelle Vo'),
+            'username' => Str::slug('Emmanuelle Vo'),
             'email' => 'emmanuelle.vo@student.hepl.be',
 
         ]);
         $sarah = User::factory()->create([
             'name' => 'Sarah Vo',
-            'slug' => Str::slug('Sarah Vo'),
+            'username' => Str::slug('Sarah Vo'),
             'email' => 'sarah.vo@gmail.com',
 
         ]);
@@ -65,7 +65,7 @@ class DatabaseSeeder extends Seeder
             $categories = [$family, $work, $hobby];
             //$users = [$emmanuelle, $sarah];
 
-            if($randomNumber > 99) { //2%
+            if($randomNumber > 99) { //2% (99)
                 Post::factory()->create(); // new author/category
 
             } elseif($randomNumber < 66) {

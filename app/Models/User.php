@@ -50,12 +50,12 @@ class User extends Authenticatable
      *
      * @var string[]
      */
-    protected $fillable = [
+    /*protected $fillable = [
         'name',
         'email',
         'password',
-        'slug',
-    ];
+        'username',
+    ];*/
 
     /**
      * The attributes that should be hidden for serialization.
@@ -80,5 +80,10 @@ class User extends Authenticatable
     {
         // retourne une relation de type BelongsTo sur l'instance de la classe Post
         return $this->hasMany(Post::class);
+    }
+
+    public function setPasswordAttribute($password)
+    {
+        $this->attributes['password'] = bcrypt($password);
     }
 }

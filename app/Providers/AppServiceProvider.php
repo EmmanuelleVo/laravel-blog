@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Pagination\Paginator;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -23,6 +25,9 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        //
+        //Paginator::useTailwind();
+
+        // Lever l'interdiction sur le mass-assignment => pas besoin de guarded/fillable
+        Model::unguard();
     }
 }

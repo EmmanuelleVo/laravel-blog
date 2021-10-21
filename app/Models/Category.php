@@ -24,12 +24,13 @@ use Illuminate\Database\Eloquent\Model;
  * @mixin \Eloquent
  * @property-read \Illuminate\Database\Eloquent\Collection|\App\Models\Post[] $posts
  * @property-read int|null $posts_count
+ * @method static \Database\Factories\CategoryFactory factory(...$parameters)
  */
 class Category extends Model
 {
     use HasFactory;
 
-    protected $guarded = [];
+    //protected $guarded = [];
 
     public function posts() {
         return $this->hasMany(Post::Class);
