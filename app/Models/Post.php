@@ -66,6 +66,12 @@ class Post extends Model
         return $this->belongsTo(User::class, 'user_id'); // si le nom de la fonction ≠ -> author_id => foreignKey : user_id
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class); // si le nom de la fonction ≠ -> author_id => foreignKey : user_id
+    }
+
+
     public function scopeFilter($query, array $filters)
     {
         $query->when($filters['search'] ?? false, fn($query, $search) =>

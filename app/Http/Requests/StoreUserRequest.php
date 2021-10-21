@@ -28,7 +28,7 @@ class StoreUserRequest extends FormRequest
             'username' => 'required|unique:users,username',
             'name' => ['required', 'min:3'],
             'email' => ['required', 'email', Rule::unique('users', 'email')], //unique:table,column
-            'password' => 'required|min:3|max:32', // ou [] -> plus souple
+            'password' => 'required|min:3|max:255', // ou [] -> plus souple
         ];
     }
 }

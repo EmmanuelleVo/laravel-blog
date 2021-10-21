@@ -40,6 +40,8 @@ use Laravel\Sanctum\HasApiTokens;
  * @property-read int|null $posts_count
  * @property string $slug
  * @method static \Illuminate\Database\Eloquent\Builder|User whereSlug($value)
+ * @property string $username
+ * @method static \Illuminate\Database\Eloquent\Builder|User whereUsername($value)
  */
 class User extends Authenticatable
 {
@@ -82,6 +84,12 @@ class User extends Authenticatable
         return $this->hasMany(Post::class);
     }
 
+    public function comments()
+    {
+        return $this->hasMany(Comment::class);
+    }
+
+    // MUTATOR
     public function setPasswordAttribute($password)
     {
         $this->attributes['password'] = bcrypt($password);

@@ -33,7 +33,7 @@ class PostController extends Controller
 
     public function show(Post $post)
     {
-        $post->load('category', 'author');
+        $post->load('category', 'author', 'comments');
 
         $page_title = "The post: {$post->title}";
 

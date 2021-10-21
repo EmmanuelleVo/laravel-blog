@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreUserRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -25,7 +25,9 @@ class RegisterController extends Controller
             'password' => 'required|min:3|max:32', // ou [] -> plus souple
         ]);*/
 
-        User::create($request->validated());
+        $user = User::create($request->validated());
+
+        auth()->login($user);
 
         //session()->flash('success', __('flash-message.account-created'));
 

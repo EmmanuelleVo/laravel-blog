@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Category;
+use App\Models\Comment;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -35,13 +36,14 @@ class DatabaseSeeder extends Seeder
             'name' => 'Emmanuelle Vo',
             'username' => Str::slug('Emmanuelle Vo'),
             'email' => 'emmanuelle.vo@student.hepl.be',
+            'password' => 'emmanuelle',
 
         ]);
         $sarah = User::factory()->create([
             'name' => 'Sarah Vo',
             'username' => Str::slug('Sarah Vo'),
             'email' => 'sarah.vo@gmail.com',
-
+            'password' => 'sarah'
         ]);
 
         $family = Category::factory()->create([
@@ -59,7 +61,7 @@ class DatabaseSeeder extends Seeder
 
         //Post::factory(1000)->create();
 
-        for ($i = 1; $i <=1000; $i++) {
+        for ($i = 1; $i <=300; $i++) {
 
             $randomNumber = rand(0,100);
             $categories = [$family, $work, $hobby];
@@ -89,6 +91,7 @@ class DatabaseSeeder extends Seeder
             }
         }
 
+        Comment::factory(1000)->create();
 
         // $categories=Category::all(); et faire foreach
 

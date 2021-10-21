@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SessionController;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
@@ -49,7 +50,6 @@ Route::get('/', [\App\Http\Controllers\PostController::class, 'index']) ->name('
 
 
 /* UN POST  */ // clé dans la route = nom de la variable, ici post
-Route::get('/posts/{post:slug}', [\App\Http\Controllers\PostController::class, 'show']);
 /*{ // {post} = comme variable dans l'url, wildcard //$slug retourne le slug de l'URL; Route Model Binding
     // Find a post by its slug and pass it to a view called "post"
     //$post = Post::where('slug', $slug)->firstOrFail(); //get() donne Collection et first() donne directement le post
@@ -112,9 +112,17 @@ Route::get('/categories/{category:slug}', function (Category $category) {
 
     return view('posts.index', compact('user', 'page_title', 'posts', 'categories', 'users', 'currentAuthor'));
 });*/
+Route::get('/posts/{post:slug}', [\App\Http\Controllers\PostController::class, 'show']);
+Route::post('/posts/{post:slug}/comments', [\App\Http\Controllers\PostCommentController::class, 'store'])->middleware('auth');
 
-Route::get('/register', [\App\Http\Controllers\RegisterController::class, 'create']);
-Route::post('/register', [\App\Http\Controllers\RegisterController::class, 'store']);
+Route::get('/register', [\App\Http\Controllers\RegisterController::class, 'create'])->middleware('guest');
+Route::post('/register', [\App\Http\Controllers\RegisterController::class, 'store'])->middleware('guest');
+
+Route::post('/logout', [\App\Http\Controllers\SessionController::class, 'destroy'])->middleware('auth');
+
+Route::get('/login', [\App\Http\Controllers\SessionController::class, 'create'])->middleware('guest');
+Route::post('/sessions', [SessionController::class, 'store'])->middleware('guest');
+
 
 
 

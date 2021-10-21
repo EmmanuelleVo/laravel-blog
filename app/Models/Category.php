@@ -35,4 +35,8 @@ class Category extends Model
     public function posts() {
         return $this->hasMany(Post::Class);
     }
+
+    public function comments() { // tous les commentaires des posts ayant une certaine catégorie
+        return $this->hasManyThrough(Comment::Class, Post::class);
+    }
 }
