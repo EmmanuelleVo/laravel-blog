@@ -1,11 +1,17 @@
 <?php
 
+use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\PostCommentController;
+use App\Http\Controllers\PostController;
+use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\SessionController;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
+use App\Services\Newsletter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
+use MailchimpMarketing\ApiClient;
 
 /*
 |--------------------------------------------------------------------------
@@ -39,7 +45,7 @@ Route::get('/posts', function () {
 
 
 /* LISTE DE TOUS LES POSTS */
-Route::get('/', [\App\Http\Controllers\PostController::class, 'index']) ->name('home');
+Route::get('/', [PostController::class, 'index']) ->name('home');
     /*{
     //$posts = Post::all(); //récupérer uniquement les posts sans relation
     // collection de posts avec les catégories qui leur sont associées; with -> eager loading
@@ -112,18 +118,19 @@ Route::get('/categories/{category:slug}', function (Category $category) {
 
     return view('posts.index', compact('user', 'page_title', 'posts', 'categories', 'users', 'currentAuthor'));
 });*/
-Route::get('/posts/{post:slug}', [\App\Http\Controllers\PostController::class, 'show']);
-Route::post('/posts/{post:slug}/comments', [\App\Http\Controllers\PostCommentController::class, 'store'])->middleware('auth');
+Route::get('/posts/{post:slug}', [PostController::class, 'show']);
+Route::post('/posts/{post:slug}/comments', [PostCommentController::class, 'store'])->middleware('auth');
 
-Route::get('/register', [\App\Http\Controllers\RegisterController::class, 'create'])->middleware('guest');
-Route::post('/register', [\App\Http\Controllers\RegisterController::class, 'store'])->middleware('guest');
+Route::get('/register', [RegisterController::class, 'create'])->middleware('guest');
+Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
 
-Route::post('/logout', [\App\Http\Controllers\SessionController::class, 'destroy'])->middleware('auth');
+Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth');
 
-Route::get('/login', [\App\Http\Controllers\SessionController::class, 'create'])->middleware('guest');
+Route::get('/login', [SessionController::class, 'create'])->middleware('guest');
 Route::post('/sessions', [SessionController::class, 'store'])->middleware('guest');
 
 
+Route::post('/newsletter',NewsletterController::class);
 
 
 
