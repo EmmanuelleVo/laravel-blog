@@ -18,6 +18,7 @@
     <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.gstatic.com">
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+    <script src="{{ asset('/js/app.js') }}"></script>
     <script src="//unpkg.com/alpinejs" defer></script>
     <style>
         html {
@@ -40,14 +41,30 @@
                 <a href="/register" class="text-xs font-bold uppercase">Register</a>
                 <a href="/login" class="ml-6 text-xs font-bold uppercase">Log In</a>
             @else
-                <span class="text-xs font-bold uppercase">Welcome {{ auth()->user()->username }}</span>
+                <x-dropdown>
+                    <x-slot name="trigger">
+                        <button class="text-xs font-bold uppercase">Welcome {{ auth()->user()->username }}</button>
+                    </x-slot>
+                    <x-slot name="entries">
+                        @can('admin')
+                            <x-dropdown-item href="/admin/posts">Dashboard</x-dropdown-item>
+                            <x-dropdown-item href="/admin/posts/create" :active="request()->is('/admin/posts/create')">
+                                New Post
+                            </x-dropdown-item>
+                        @endcan
+                        <x-dropdown-item href="#" x-data="{}"
+                                         @click.prevent="document.querySelector('#logout-form').submit()">Log Out
+                        </x-dropdown-item>
+                    </x-slot>
+                </x-dropdown>
 
-                <form action="/logout" method="POST" >
+                <form id="logout-form" action="/logout" method="POST" class="hidden">
                     @csrf
-                    <button type="submit" class="ml-6 text-xs font-semibold text-blue-500 uppercase">Log Out</button>
+                    {{--<button type="submit" class="ml-6 text-xs font-semibold text-blue-500 uppercase">Log Out</button>--}}
                 </form>
             @endguest
-            <a href="#newsletter" class="px-5 py-3 ml-3 text-xs font-semibold text-white uppercase bg-blue-500 rounded-full">
+            <a href="#newsletter"
+               class="px-5 py-3 ml-3 text-xs font-semibold text-white uppercase bg-blue-500 rounded-full">
                 Subscribe for Updates
             </a>
         </div>
@@ -55,7 +72,8 @@
 
     {{ $mainContent }}
 
-    <footer id="newsletter" class="px-10 py-16 mt-16 text-center bg-gray-100 rounded-xl border border-black border-opacity-5">
+    <footer id="newsletter"
+            class="px-10 py-16 mt-16 text-center bg-gray-100 rounded-xl border border-black border-opacity-5">
         <img src="/images/lary-newsletter-icon.svg" alt="" class="mx-auto -mb-6" style="width: 145px;">
         <h5 class="text-3xl">Stay in touch with the latest posts</h5>
         <p class="mt-3 text-sm">Promise to keep the inbox clean. No bugs.</p>

@@ -2,9 +2,14 @@
 
 namespace App\Providers;
 
+use App\Models\User;
+use App\Services\MailchimpNewsletter;
+use App\Services\Newsletter;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Pagination\Paginator;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
+use MailchimpMarketing\ApiClient;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,7 +20,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+        app()->bind(Newsletter::class, function () { // quand on demande qq part dans l'app
+            $client = new ApiClient();
+
+            $client->setConfig([
+                'apiKey' => config('services.mailchimp.key'),
+                'server' => config('services.mailchimp.server-prefix'),
+            ]);
+
+            return new MailchimpNewsletter($client); //return instance Newsletter avec qqch qu'on
+        });
     }
 
     /**
@@ -29,5 +43,9 @@ class AppServiceProvider extends ServiceProvider
 
         // Lever l'interdiction sur le mass-assignment => pas besoin de guarded/fillable
         Model::unguard();
+
+        Gate::define('admin', function (User $user) {
+            return $user->username === 'emmanuelle-vo';
+        });
     }
 }

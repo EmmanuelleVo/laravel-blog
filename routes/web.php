@@ -8,7 +8,7 @@ use App\Http\Controllers\SessionController;
 use App\Models\Category;
 use App\Models\Post;
 use App\Models\User;
-use App\Services\Newsletter;
+use App\Services\MailchimpNewsletter;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Route;
 use MailchimpMarketing\ApiClient;
@@ -129,8 +129,10 @@ Route::post('/logout', [SessionController::class, 'destroy'])->middleware('auth'
 Route::get('/login', [SessionController::class, 'create'])->middleware('guest');
 Route::post('/sessions', [SessionController::class, 'store'])->middleware('guest');
 
-
 Route::post('/newsletter',NewsletterController::class);
+
+Route::get('/admin/posts/create',[PostController::class, 'create'])->middleware('admins');
+Route::post('/admin/posts',[PostController::class, 'store'])->middleware('admins');
 
 
 

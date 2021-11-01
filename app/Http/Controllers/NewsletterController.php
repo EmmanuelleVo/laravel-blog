@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\MailchimpNewsletter;
 use App\Services\Newsletter;
 
 class NewsletterController extends Controller
 {
-    public function __invoke(Newsletter $newsletter) // single action controller
+    public function __invoke(Newsletter $newsletter) // single action controller | Laravel va voir dans service container si Newsletter
     {
         request()->validate(['email' => 'required|email']);
 
