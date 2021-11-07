@@ -25,20 +25,34 @@ class AdminPostController extends Controller
 
     public function store()
     {
-        $attributes = request()->validate([
+        //$post = new Post();
+
+        /*$attributes = request()->validate([
             'title' => 'required|max:255',
-            'slug' => 'required|max:255',
+            //'slug' => 'required|max:255',
             'excerpt' => 'required',
-            'thumbnail' => 'image',
+            //'thumbnail' => 'image',
+            'thumbnail' => $post->exists ? ['image'] : ['required', 'image'],
+            'slug' => ['required', 'max:255', Rule::unique('posts', 'slug')->ignore($post)],
             'body' => 'required',
             'category_id' => ['required', Rule::exists('categories', 'id')],
-        ]);
+        ]);*/
+
+        $attributes = $this->validatePost();
 
         //$attributes['slug'] = Str::slug($attributes['title']);
-        $attributes['thumbnail_path'] = request()->file('thumbnail')?->store('thumbnails');  // Ici : imagemagick,..
+        /*$attributes['thumbnail_path'] = request()->file('thumbnail')?->store('thumbnails');  // Ici : imagemagick,..
         unset($attributes['thumbnail']);
         $attributes['user_id'] = auth()->id();
-        $attributes['published_at'] = now('Europe/Brussels');
+        $attributes['published_at'] = now('Europe/Brussels');*/
+
+        $attributes = array_merge($this->validatePost(), [
+            'user_id' => request()->user()->id,
+            'thumbnail_path' => request()->file('thumbnail')?->store('thumbnails'),
+            'published_at' => now('Europe/Brussels'),
+        ]);
+        unset($attributes['thumbnail']);
+
 
         $post = Post::create($attributes);
 
@@ -56,14 +70,7 @@ class AdminPostController extends Controller
 
     public function update(Post $post)
     {
-        $attributes = request()->validate([
-            'title' => 'required|max:255',
-            'slug' => ['required', 'max:255', Rule::unique('posts', 'slug')->ignore($post->id)],
-            'excerpt' => 'required',
-            'thumbnail' => 'image',
-            'body' => 'required',
-            'category_id' => ['required', Rule::exists('categories', 'id')],
-        ]);
+        $attributes = $this->validatePost($post);
 
         if (isset($attributes['thumbnail'])) {
             $attributes['thumbnail_path'] = request()->file('thumbnail')?->store('thumbnails');
@@ -80,5 +87,27 @@ class AdminPostController extends Controller
         $post->delete();
 
         return back()->with('success', 'Post Deleted');
+    }
+
+
+    /**
+     * @param Post $post
+     * @return array
+     */
+    protected function validatePost(?Post $post = null): array
+    {
+        $post ??= new Post(); // si on a un post, on l'utilise sinon on utilise une nouvelle instance
+
+        $attributes = request()->validate([
+            'title' => 'required|max:255',
+            'slug' => ['required', 'max:255', Rule::unique('posts', 'slug')->ignore($post)],
+            'excerpt' => 'required',
+            //'thumbnail' => 'image',
+            'thumbnail' => $post->exists ? ['image'] : ['required', 'image'],
+            'body' => 'required',
+            'category_id' => ['required', Rule::exists('categories', 'id')],
+            //'published_at' => ['required'],
+        ]);
+        return $attributes;
     }
 }

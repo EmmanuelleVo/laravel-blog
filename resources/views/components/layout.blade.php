@@ -46,12 +46,12 @@
                         <button class="text-xs font-bold uppercase">Welcome {{ auth()->user()->username }}</button>
                     </x-slot>
                     <x-slot name="entries">
-                        @can('admin')
+                        @admin
                             <x-dropdown-item href="/admin/posts">Dashboard</x-dropdown-item>
                             <x-dropdown-item href="/admin/posts/create" :active="request()->is('/admin/posts/create')">
                                 New Post
                             </x-dropdown-item>
-                        @endcan
+                        @endadmin
                         <x-dropdown-item href="#" x-data="{}"
                                          @click.prevent="document.querySelector('#logout-form').submit()">Log Out
                         </x-dropdown-item>
