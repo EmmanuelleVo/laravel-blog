@@ -122,6 +122,7 @@ Route::get('/categories/{category:slug}', function (Category $category) {
 Route::get('/posts/{post:slug}', [PostController::class, 'show']);
 Route::post('/posts/{post:slug}/comments', [PostCommentController::class, 'store'])->middleware('auth');
 
+
 Route::get('/register', [RegisterController::class, 'create'])->middleware('guest');
 Route::post('/register', [RegisterController::class, 'store'])->middleware('guest');
 
@@ -161,3 +162,10 @@ Route::middleware('can:admin')->group(function () {
 
     return $posts;
 });*/
+
+
+
+
+Route::get('/hello', function (){
+    return 'Hello';
+});

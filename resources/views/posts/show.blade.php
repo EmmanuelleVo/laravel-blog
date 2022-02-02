@@ -57,7 +57,6 @@
                     @foreach($post->comments as $comment)
                         <x-post-comment :comment="$comment"/>
                     @endforeach
-
                 </section>
             </article>
         </main>

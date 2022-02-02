@@ -71,24 +71,25 @@ class Post extends Model
         return $this->hasMany(Comment::class); // si le nom de la fonction ≠ -> author_id => foreignKey : user_id
     }
 
+    public function hasComments() :bool
+    {
+        return (bool) $this->comments()->count();
+    }
+
 
     public function scopeFilter($query, array $filters)
     {
-        $query->when($filters['search'] ?? false, fn($query, $search) =>
-            $query->where(fn($query) =>
-                $query  ->where('title', 'like', '%' . $search . '%')
-                        ->orWhere('excerpt', 'like', '%' . $search . '%')
-                        ->orWhere('body', 'like', '%' . $search . '%'))
+        $query->when($filters['search'] ?? false, fn($query, $search) => $query->where(fn($query) => $query->where('title', 'like', '%' . $search . '%')
+            ->orWhere('excerpt', 'like', '%' . $search . '%')
+            ->orWhere('body', 'like', '%' . $search . '%'))
         );
 
-        $query->when($filters['category'] ?? false, fn($query, $category) =>
-            $query->whereHas('category', fn($query) => // posts whereHas (relation category)
-                    $query->where('slug', $category)) // où le slug = category que l'user a mis
+        $query->when($filters['category'] ?? false, fn($query, $category) => $query->whereHas('category', fn($query) => // posts whereHas (relation category)
+        $query->where('slug', $category)) // où le slug = category que l'user a mis
         );
 
-        $query->when($filters['author'] ?? false, fn($query, $author) =>
-            $query->whereHas('author', fn($query) => // posts whereHas (relation category)
-                $query->where('username', $author)) // où le slug = category que l'user a mis
+        $query->when($filters['author'] ?? false, fn($query, $author) => $query->whereHas('author', fn($query) => // posts whereHas (relation category)
+        $query->where('username', $author)) // où le slug = category que l'user a mis
         );
 
     }

@@ -47,6 +47,11 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable;
 
+    public function routeNotificationForSlack($notification)
+    {
+        return 'https://hooks.slack.com/services/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';
+    }
+
     /**
      * The attributes that are mass assignable.
      *
@@ -58,6 +63,7 @@ class User extends Authenticatable
         'password',
         'username',
     ];*/
+
 
     /**
      * The attributes that should be hidden for serialization.
